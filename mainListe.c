@@ -131,7 +131,7 @@ int main(void){
     displayInt(sn2);
     int m3=3; // insert au milieu de la liste 
     printf("\nteste insertion au milieu avec m3 = : %d\n", m3);
-    l=list_orderedAppend(&l,  compareInt ,&m3);
+    s_node *sn3=list_orderedAppend(&l,  compareInt ,&m3);
     ok=check_list_state(l, &node_int_to_string , "0 -> 1 -> 3 -> 8 -> 10 -> null");
         if(ok){
             printf("c bon\n");
