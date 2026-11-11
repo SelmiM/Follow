@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "liste.h"
 #include "testListHelpers.h"
-//lysa 
+
 s_node *liste_create(void){
     return NULL;
 }
@@ -58,48 +58,59 @@ s_node *list_append(s_node *head , void *data){
 }
 
 
-s_node *list_orderedAppend(s_node **head,int (*compareInt)(s_node *, void *),
+s_node *list_orderedAppend(s_node **head,int (*compare)(s_node *, void *),
 void *param){
+    
+    s_node *tmp=*head;
+    s_node *nouveau=(s_node *)malloc(sizeof(s_node));
+    if(nouveau==NULL){
+        return *head;
+    }
+    nouveau->data=param;
+    // si la liste est vide on insere le nouveau node et on retourne le nouveau node
+    if(*head==NULL){
+        nouveau->next=NULL;
+        *head=nouveau;
+        return nouveau;
+    }
+    int i=  compare(tmp,param);
+    if(i>0 ){ //node->data > data return >0
+        nouveau->next=tmp;
+        *head=nouveau;
+        return nouveau;
+    }
+    s_node *prec=tmp;
+    while (tmp!=NULL && i<0 ){ //node->data < data return <0
+        prec=tmp;
+        tmp=tmp->next;
+        if (tmp != NULL){
+            i = compare(tmp, param);
+        }              
+    }
 
-    s_node **tmp = head;
-    if (*tmp == NULL){  //liste chainer qui est vide 
-        *head = list_insert(NULL, param);
-        return *head;
+    if (i==0){
+        free(nouveau);
+        return tmp;
     }
-    int i = compareInt(*tmp, param);
+    if (tmp==NULL){
+        prec->next=nouveau;
+        nouveau->next=NULL;
+        return nouveau;
+    }
+    
+    prec->next=nouveau;
+    nouveau->next=tmp;
+    return nouveau;
+     
 
-    if (i == -1 ){ // param est egale a tmp->data on  doit pas inseer on retourne le debut 
-        return *head;
-    }
-
-    if (*(int *)(*tmp)->data  >  *(int *)param){ // si on met verifie pas au debut ça va pas insere en 1 ere car comppartint elle verfie au mileu seulment elle ne verifi pas au debut 
-        *head = list_insert(*head, param);
-        return *head;
-    }
-    while ((*tmp)->next != NULL && i ==!1 ){ // on verifie si on est pas a la fin et si i est diferent de 1  on passe au moeud suivant on a pas trouver encore la place de param 
-        tmp = &(*tmp)->next;
-        i = compareInt(*tmp, param);
-    }
-    if (i == -1){
-        return *head;
-    }
-    s_node *nou = list_insert((*tmp)->next, param);
-
-    if (nou == NULL){
-        return *head;
-    }
-    (*tmp)->next = nou;
-    return *head;
 }
-
-
 
 s_node *list_remove(s_node *head,void *data){
 
         s_node *tmp=head;
         s_node *prec=NULL;
 // si on est pas a la fin de la liste chainé et la valeure de datat est diferencte de celle qu'on veut supprimer 
-        while(tmp!= NULL && *(int*)tmp->data != *(int*)data){
+        while(tmp!= NULL && tmp->data != data){
             prec = tmp;
             tmp = tmp->next;
         }
@@ -139,11 +150,6 @@ void list_destroy(s_node *head){
     }
 
 }
-
-
-
-
-
 
 
 void displaylist(s_node *head, void (*display)(s_node *)){
