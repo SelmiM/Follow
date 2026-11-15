@@ -40,11 +40,14 @@ s_node *list_insert(s_node *head , void *data){
 }
  
 s_node *list_append(s_node *head , void *data){
+    if(head==NULL){
+        return list_insert(head,data);
+    }
     s_node  *last = (s_node * ) malloc(sizeof(s_node));
     if(last ==NULL){
         return head;  // si la malloc echoue on retourn pas null ici on retourne le head snn on va perdre la liste chainé qui est deja creee
     }
-
+    
     s_node  *tmp = head;
     
     while(tmp->next!=NULL){
@@ -73,22 +76,20 @@ void *param){
         *head=nouveau;
         return nouveau;
     }
-    int i=  compare(tmp,param);
-    if(i>0 ){ //node->data > data return >0
+     
+    if(compare(tmp,param)>0 ){ //node->data > data return >0
         nouveau->next=tmp;
         *head=nouveau;
         return nouveau;
     }
     s_node *prec=tmp;
-    while (tmp!=NULL && i<0 ){ //node->data < data return <0
+    while (tmp!=NULL &&  compare(tmp, param)<0 ){ //node->data < data return <0
         prec=tmp;
         tmp=tmp->next;
-        if (tmp != NULL){
-            i = compare(tmp, param);
-        }              
+                     
     }
 
-    if (i==0){
+    if (compare(tmp,param)==0){
         free(nouveau);
         return tmp;
     }

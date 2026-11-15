@@ -9,7 +9,6 @@ void displayInt(s_node *node){
 
 }
 
-
    // si a ==b alors node->data = data return 0
    // si a < b alors node->data < data return <0
    // si a > b alors node->data > data return >0
@@ -39,6 +38,17 @@ int main(void){
    else{
     printf("c'est pas  bon\n");
    }
+    s_node *an=liste_create();
+
+    printf("\nteste de la fonction liste_append sur une liste vide  \n");
+    an=list_append(an , &k);  // c'est a l qu'on ajoute ici 
+    ok=check_list_state(an, &node_int_to_string , "8 -> null");
+        if(ok){
+            printf("c bon\n");
+            }
+    else{
+        printf("c'est pas  bon\n");
+    }
     // tester la fonction get_data
     void * data=list_get_data(l);
     printf("la valeur du data est : %d\n",*(int*)data); // toujour casteer le data car c'est un void pointer car le compilateur ne sait pas le type de data

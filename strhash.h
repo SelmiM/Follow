@@ -1,4 +1,34 @@
-#ifndef _LIST_H_
-#define _LIST_H_
+#ifndef _STRHASH_H_
+#define _STRHASH_H_
+#include "liste.h"
 
-char *liste_create(void);
+typedef struct {
+    s_node *l_mots;    
+     int nb_mots;
+     
+} s_entree;
+
+
+typedef struct {
+    s_entree *tableau;    //il sotoque la liste de node et les information
+    int size;  
+    int nb_tot;
+    int nb_min;
+    int nb_max;
+    double ecart_type;
+
+} s_strhash;
+
+
+//creation d’une table de hashage,
+s_strhash *strhash_create(unsigned int size);
+void strhash_print(s_strhash *h);
+void strhash_destroy(s_strhash *h);   
+const char  *strhash_add(s_strhash *h , const char *word,int (*compare)(s_node *, void *));
+void strhash_clear(s_strhash *h);
+void strhash_remove(s_strhash *h, const char *word);
+void strhash_stats( s_strhash *h);
+
+
+
+#endif
