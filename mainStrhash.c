@@ -68,7 +68,7 @@ int main(void){
     strhash_print(t_hash);
 
 
-    printf("\n--- TEST de la fonction de lib´eration des donn´ees enregistr´ees dans une table de hashage,  ---\n");
+    printf("\n--- TEST de la fonction de libération des données enregistrées dans une table de hashage,  ---\n");
     strhash_clear(t_hash);
     strhash_print(t_hash);
     printf("\n--- TEST de la fonction destruction de la table si elle est vide \n");

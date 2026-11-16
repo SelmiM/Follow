@@ -45,15 +45,22 @@ s_strhash *strhash_create(unsigned int size){
 
 void strhash_destroy(s_strhash *h){
     if(h!=NULL){
-        int i=0;
+        unsigned int i=0;
         while (i<h->size){
             while (h->tableau[i].l_mots != NULL) {               
                 free(h->tableau[i].l_mots->data);
                 h->tableau[i].l_mots=list_headRemove(h->tableau[i].l_mots);
+                h->tableau[i].nb_mots--;
+                h->nb_tot--;
             }
+
             i++;
         }
         free(h->tableau);
+        h->nb_tot = 0;
+        h->nb_min = 0;
+        h->nb_max = 0;
+        h->ecart_type = 0.0;
         free(h);
 
     }else{
@@ -66,7 +73,7 @@ void strhash_destroy(s_strhash *h){
 
 void strhash_clear(s_strhash *h){
     if (h != NULL){
-        int i=0;
+        unsigned int i=0;
         while(i < h->size){
             while(h->tableau[i].l_mots!=NULL){
                 free(h->tableau[i].l_mots->data);
@@ -77,19 +84,31 @@ void strhash_clear(s_strhash *h){
             i++;
   
         }
+
+
+        h->nb_tot = 0;
+        h->nb_min = 0;
+        h->nb_max = 0;
+        h->ecart_type = 0.0;
         
 
     }
 }
 
 const char  *strhash_add(s_strhash *h , const char *word,int (*compare)(s_node *, void *)){
-    
+    if (h == NULL || h->tableau == NULL || word == NULL){
+        return NULL;
+    }
     char *copie=strdup(word);
     if(copie == NULL){
         return NULL;
     }
     int clef=hash(word, h->size);
     s_node *m=list_orderedAppend(&h->tableau[clef].l_mots,compare,copie);
+    if(m==NULL){
+        free(copie);
+        return NULL;
+    }
     if(m->data != copie ){
         free(copie);
         return m->data;
@@ -132,8 +151,11 @@ void strhash_remove(s_strhash *h, const char *word){
 
 void  strhash_stats( s_strhash *h){
     if(h!=NULL && h->tableau != NULL ){
+        h->nb_min = h->tableau[0].nb_mots;
+        h->nb_max = h->tableau[0].nb_mots;
 
-        int i =0;
+        unsigned int i = 1;
+       
         while ( i<h->size){
             if(h->nb_max < h->tableau[i].nb_mots){
                 h->nb_max= h->tableau[i].nb_mots;
@@ -146,7 +168,7 @@ void  strhash_stats( s_strhash *h){
         }
         double moyenne= (double)h->nb_tot/(double)h->size;
         double diff=0.0;
-        int k=0;
+        unsigned int k=0;
         while ( k<h->size){
             diff=diff+((double)h->tableau[k].nb_mots - moyenne)*((double)h->tableau[k].nb_mots - moyenne);
             k++;
@@ -171,11 +193,11 @@ void strhash_print(s_strhash *h) {
 
     }else{
 
-    int i = 0;
+    unsigned int i = 0;
 
     while (i < h->size) {
 
-        printf("Case %d : ", i);
+        printf("Case %u : ", i);
 
         s_node *courant = h->tableau[i].l_mots;
 
@@ -186,7 +208,7 @@ void strhash_print(s_strhash *h) {
         }
 
         printf("NULL\n");
-        printf("Nombre total de mots daans la liste de node n°=%d = %d\n",i, h->tableau[i].nb_mots);
+        printf("Nombre total de mots daans la liste de node n°=%u = %d\n",i, h->tableau[i].nb_mots);
         i++;
     }
 

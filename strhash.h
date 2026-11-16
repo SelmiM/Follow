@@ -11,7 +11,7 @@ typedef struct {
 
 typedef struct {
     s_entree *tableau;    //il sotoque la liste de node et les information
-    int size;  
+    unsigned int size;  
     int nb_tot;
     int nb_min;
     int nb_max;
