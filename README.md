@@ -33,7 +33,7 @@ La ponctuation et les caractères spéciaux sont également pris en compte, tand
 - **Conception de l'interface :** Glade
 - **Algorithmes :** Alignement de textes et calcul des différences
 - **Gestion des fichiers :** Lecture et manipulation de fichiers texte
-- **Outils :** GCC, Git et GitHub
+- **Outils :** GCC, Git et GitLub
 
 ## Auteur
 
