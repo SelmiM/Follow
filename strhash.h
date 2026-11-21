@@ -23,11 +23,13 @@ typedef struct {
 //creation d’une table de hashage,
 s_strhash *strhash_create(unsigned int size);
 void strhash_print(s_strhash *h);
+void strhash_ckek(s_strhash *h, const char *word) ;
 void strhash_destroy(s_strhash *h);   
-const char  *strhash_add(s_strhash *h , const char *word,int (*compare)(s_node *, void *));
+const char  *strhash_add(s_strhash *h , const char *word);
 void strhash_clear(s_strhash *h);
 void strhash_remove(s_strhash *h, const char *word);
 void strhash_stats( s_strhash *h);
+int comparechar(s_node *node, void *data);
 
 
 

@@ -28,11 +28,21 @@ s_strhash *strhash_create(unsigned int size){
     if(t_hash==NULL){
         return NULL;
     }
-    t_hash->tableau =(s_entree*)calloc(size,sizeof(s_entree));
+    t_hash->tableau =(s_entree*)malloc(size*sizeof(s_entree));
     if (t_hash->tableau == NULL){
         free(t_hash);
         return NULL;
     }
+    unsigned  int i=0;
+    while (i<size){
+        t_hash->tableau[i].l_mots= liste_create();
+        t_hash->tableau[i].nb_mots=0;
+        i++;
+    }
+    {
+        /* code */
+    }
+    
     t_hash->size = size;
     t_hash->nb_tot=0;
     t_hash->nb_min=0;
@@ -42,32 +52,6 @@ s_strhash *strhash_create(unsigned int size){
 
 }
 
-
-void strhash_destroy(s_strhash *h){
-    if(h!=NULL){
-        unsigned int i=0;
-        while (i<h->size){
-            while (h->tableau[i].l_mots != NULL) {               
-                free(h->tableau[i].l_mots->data);
-                h->tableau[i].l_mots=list_headRemove(h->tableau[i].l_mots);
-                h->tableau[i].nb_mots--;
-                h->nb_tot--;
-            }
-
-            i++;
-        }
-        free(h->tableau);
-        h->nb_tot = 0;
-        h->nb_min = 0;
-        h->nb_max = 0;
-        h->ecart_type = 0.0;
-        free(h);
-
-    }else{
-        printf("table n'existe pas ");
-    }
-    
-}
 // faire un parcour de liste et faire un free sur chaqyun ed'une donner qu'il ya dasn les node 
 
 
@@ -95,7 +79,21 @@ void strhash_clear(s_strhash *h){
     }
 }
 
-const char  *strhash_add(s_strhash *h , const char *word,int (*compare)(s_node *, void *)){
+void strhash_destroy(s_strhash *h){
+    
+        strhash_clear(h);
+        free(h->tableau);
+        
+        free(h);
+
+    
+    
+}
+int comparechar(s_node *node, void *data){
+    return strcmp((char *)node->data,(char *)data);
+}
+
+const char  *strhash_add(s_strhash *h,const char *word){
     if (h == NULL || h->tableau == NULL || word == NULL){
         return NULL;
     }
@@ -104,7 +102,7 @@ const char  *strhash_add(s_strhash *h , const char *word,int (*compare)(s_node *
         return NULL;
     }
     int clef=hash(word, h->size);
-    s_node *m=list_orderedAppend(&h->tableau[clef].l_mots,compare,copie);
+    s_node *m=list_orderedAppend(&h->tableau[clef].l_mots,comparechar,copie);
     if(m==NULL){
         free(copie);
         return NULL;
@@ -120,10 +118,6 @@ const char  *strhash_add(s_strhash *h , const char *word,int (*compare)(s_node *
 }
 
 
-
-
-
-
 void strhash_remove(s_strhash *h, const char *word){
 
     int b=0; 
@@ -133,7 +127,7 @@ void strhash_remove(s_strhash *h, const char *word){
         while(courant!=NULL && b ==0){
             if(strcmp((char*)courant->data,(char*)word)==0){
                 char *mot=courant->data;
-                h->tableau[clef].l_mots=list_remove(h->tableau[clef].l_mots,(char*)word);
+                h->tableau[clef].l_mots=list_remove(h->tableau[clef].l_mots,mot);
                 free(mot);
                 h->tableau[clef].nb_mots--;
                 h->nb_tot--;
@@ -149,7 +143,7 @@ void strhash_remove(s_strhash *h, const char *word){
 
 
 
-void  strhash_stats( s_strhash *h){
+void  strhash_stats( s_strhash *h ){
     if(h!=NULL && h->tableau != NULL ){
         h->nb_min = h->tableau[0].nb_mots;
         h->nb_max = h->tableau[0].nb_mots;
@@ -188,17 +182,12 @@ void  strhash_stats( s_strhash *h){
 
 
 void strhash_print(s_strhash *h) {
-    if (h == NULL) {
+    if (h == NULL) {    
         printf("table de hashage null");
-
     }else{
-
     unsigned int i = 0;
-
     while (i < h->size) {
-
         printf("Case %u : ", i);
-
         s_node *courant = h->tableau[i].l_mots;
 
         while (courant != NULL) {
@@ -214,4 +203,35 @@ void strhash_print(s_strhash *h) {
 
     printf("\nNombre total de mots dans la table de hashage : %d\n", h->nb_tot);
     }
+}
+
+
+void strhash_ckek(s_strhash *h, const char *word) {
+    if (h == NULL) {    
+        printf("table de hashage null");
+        printf("le mot n'existe pas");
+    }
+    else{
+    int clef=hash(word, h->size);
+
+    s_node *courant = h->tableau[clef].l_mots;
+    int i=0;
+
+        while (courant != NULL && i==0) {
+
+            if ((char *)courant->data == word){
+                i=1;
+            }
+
+            courant = courant->next;
+        }
+        if(i==0){
+            printf (" le mot %s n'existe pas  dans la table de hashage\n",word);
+        }else{
+            printf (" le mot %s existe dans la table de hashage\n",word);
+        }
+        
+
+        
+    }  
 }
